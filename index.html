@@ -396,7 +396,7 @@
 </head>
 <body>
   <div class="wrap">
-    <section class="hero">
+    <section id="heroSection" class="hero">
       <div class="card">
         <div class="tag">Adaptive PE Training Game</div>
         <h1 class="hero-title">Adaptive PE <span class="gradient">Ally Quest</span></h1>
@@ -512,7 +512,7 @@
       <p id="highScoreText" class="footer-note"></p>
     </section>
 
-    <p class="footer-note">
+    <p id="pageFooter" class="footer-note">
       This game is designed as a practice tool, not a replacement for local training, safety procedures, or individualized support plans.
     </p>
   </div>
@@ -913,6 +913,8 @@
     };
 
     const els = {
+      heroSection: document.getElementById("heroSection"),
+      pageFooter: document.getElementById("pageFooter"),
       playerName: document.getElementById("playerName"),
       startBtn: document.getElementById("startBtn"),
       dashboard: document.getElementById("dashboard"),
@@ -1011,6 +1013,8 @@
 
     function startGame() {
       state.player = els.playerName.value.trim() || "Volunteer";
+      els.heroSection.classList.add("hidden");
+      els.pageFooter.classList.add("hidden");
       state.points = 0;
       state.streak = 0;
       state.round = 0;
@@ -1024,6 +1028,7 @@
       renderBadges();
       updateDashboard();
       renderScenario();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function renderScenario() {
