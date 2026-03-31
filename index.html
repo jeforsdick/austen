@@ -289,15 +289,20 @@
 
     .badge-list {
       display: grid;
-      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
 
     .badge {
       display: flex;
-      gap: 12px;
+      flex-direction: column;
+      gap: 10px;
       align-items: center;
-      padding: 12px;
-      border-radius: 16px;
+      justify-content: center;
+      text-align: center;
+      aspect-ratio: 1 / 1;
+      padding: 14px;
+      border-radius: 20px;
       background: #f8fbff;
       border: 1px solid #d7e2f2;
       opacity: 0.55;
@@ -310,26 +315,27 @@
     }
 
     .badge-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+      width: 68px;
+      height: 68px;
+      border-radius: 999px;
       display: grid;
       place-items: center;
-      font-size: 1.45rem;
+      font-size: 1.8rem;
       background: white;
       box-shadow: inset 0 0 0 1px #dde7f8;
     }
 
     .badge h4 {
-      margin: 0 0 4px;
-      font-size: 1rem;
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.2;
     }
 
     .badge p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.45;
+      font-size: 0.82rem;
+      line-height: 1.35;
     }
 
     .mini {
@@ -479,6 +485,7 @@
       <div class="side-stack">
         <div class="card">
           <h3 style="margin-top:0;">Badges</h3>
+          <p class="mini" style="margin-top:-4px; margin-bottom: 12px;">Earn badges by making strong support choices.</p>
           <div id="badgeList" class="badge-list"></div>
         </div>
         </div>
