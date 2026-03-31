@@ -457,6 +457,16 @@
       </div>
     </section>
 
+    <section id="coachGuide" class="card hidden" style="margin-bottom: 20px;">
+      <h3 style="margin-top:0;">Quick coaching guide</h3>
+      <p class="mini">
+        Keep support person-centered. Start with respect, then offer choices, then fade help when the person can do more independently.
+      </p>
+      <p class="mini">
+        In adaptive PE, your goal is not to do the activity for someone. Your goal is to help them participate as fully, safely, and joyfully as possible.
+      </p>
+    </section>
+
     <section id="gameArea" class="game-grid hidden">
       <div class="card">
         <div id="scenarioTag" class="tag">Warm Up</div>
@@ -471,16 +481,7 @@
           <h3 style="margin-top:0;">Badges</h3>
           <div id="badgeList" class="badge-list"></div>
         </div>
-        <div class="card">
-          <h3 style="margin-top:0;">Quick coaching guide</h3>
-          <p class="mini">
-            Keep support person-centered. Start with respect, then offer choices, then fade help when the person can do more independently.
-          </p>
-          <p class="mini">
-            In adaptive PE, your goal is not to do the activity for someone. Your goal is to help them participate as fully, safely, and joyfully as possible.
-          </p>
         </div>
-      </div>
     </section>
 
     <section id="endScreen" class="card hidden">
@@ -915,6 +916,7 @@
     const els = {
       heroSection: document.getElementById("heroSection"),
       pageFooter: document.getElementById("pageFooter"),
+      coachGuide: document.getElementById("coachGuide"),
       playerName: document.getElementById("playerName"),
       startBtn: document.getElementById("startBtn"),
       dashboard: document.getElementById("dashboard"),
@@ -1023,6 +1025,7 @@
       state.answered = false;
       state.chosenSet = shuffle(scenarios).slice(0, 8);
       els.dashboard.classList.remove("hidden");
+      els.coachGuide.classList.remove("hidden");
       els.gameArea.classList.remove("hidden");
       els.endScreen.classList.add("hidden");
       renderBadges();
@@ -1108,6 +1111,7 @@
       }
 
       els.gameArea.classList.add("hidden");
+      els.coachGuide.classList.add("hidden");
       els.endScreen.classList.remove("hidden");
       els.endTitle.textContent = `${state.player}, you finished Ally Quest!`;
       els.endSubtitle.textContent = `You practiced eight real-world support moments from an adaptive PE afternoon program.`;
