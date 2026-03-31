@@ -31,7 +31,7 @@
     }
 
     .wrap {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
       padding: 24px;
     }
@@ -180,7 +180,7 @@
 
     .game-grid {
       display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
       gap: 20px;
       align-items: start;
     }
@@ -291,25 +291,18 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      align-items: start;
     }
 
     .badge {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      width: 100%;
-      max-width: 145px;
-      aspect-ratio: 1 / 1;
-      margin: 0 auto;
+      align-items: flex-start;
+      gap: 10px;
       padding: 10px;
-      border-radius: 999px;
+      min-height: 104px;
+      border-radius: 16px;
       background: #f8fbff;
       border: 1px solid #d7e2f2;
-      opacity: 0.55;
-      overflow: hidden;
+      opacity: 0.58;
     }
 
     .badge.earned {
@@ -319,30 +312,32 @@
     }
 
     .badge-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
       display: grid;
       place-items: center;
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       background: white;
       box-shadow: inset 0 0 0 1px #dde7f8;
-      margin-bottom: 6px;
       flex-shrink: 0;
     }
 
+    .badge-copy {
+      min-width: 0;
+    }
+
     .badge h4 {
-      margin: 0 0 3px;
-      font-size: 0.76rem;
-      line-height: 1.1;
+      margin: 0 0 4px;
+      font-size: 0.88rem;
+      line-height: 1.15;
     }
 
     .badge p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.63rem;
-      line-height: 1.15;
-      max-width: 90%;
+      font-size: 0.73rem;
+      line-height: 1.28;
     }
 
     .mini {
@@ -395,6 +390,10 @@
       .dashboard {
         grid-template-columns: repeat(2, 1fr);
       }
+
+      .badge-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 600px) {
@@ -404,27 +403,8 @@
       .card, .stat { padding: 18px; }
       .start-box { flex-direction: column; align-items: stretch; }
       button { width: 100%; }
-      .badge {
-        max-width: 120px;
-        padding: 8px;
-      }
-      .badge-icon {
-        width: 36px;
-        height: 36px;
-        font-size: 1.05rem;
-      }
-      .badge h4 {
-        font-size: 0.68rem;
-      }
-      .badge p {
-        font-size: 0.57rem;
-      }
-    }
-      .dashboard { grid-template-columns: 1fr; }
-      .hero-title { font-size: 2rem; }
-      .card, .stat { padding: 18px; }
-      .start-box { flex-direction: column; align-items: stretch; }
-      button { width: 100%; }
+      .badge-list { grid-template-columns: 1fr; }
+      .badge { min-height: auto; }
     }
   </style>
 </head>
@@ -513,10 +493,10 @@
       <div class="side-stack">
         <div class="card">
           <h3 style="margin-top:0;">Badges</h3>
-          <p class="mini" style="margin-top:-4px; margin-bottom: 12px;">Earn badges by making strong support choices.</p>
+          <p class="mini" style="margin-top: 0; margin-bottom: 12px;">Earn badges by making strong support choices.</p>
           <div id="badgeList" class="badge-list"></div>
         </div>
-        </div>
+      </div>
     </section>
 
     <section id="endScreen" class="card hidden">
@@ -902,37 +882,37 @@
       choice: {
         icon: "🧭",
         title: "Choice Champion",
-        text: "You consistently offered respectful, supportive choices."
+        text: "Offered respectful choices."
       },
       communication: {
         icon: "💬",
         title: "Communication Star",
-        text: "You adapted communication so the participant could engage."
+        text: "Adapted communication support."
       },
       inclusion: {
         icon: "🤝",
         title: "Inclusion Leader",
-        text: "You made sure everyone had a meaningful place in the activity."
+        text: "Made participation more inclusive."
       },
       independence: {
         icon: "🌱",
         title: "Independence Builder",
-        text: "You supported skill growth without taking over."
+        text: "Supported skill growth without taking over."
       },
       respect: {
         icon: "✨",
         title: "Dignity Defender",
-        text: "You modeled respectful, person-centered support."
+        text: "Modeled respectful support."
       },
       regulation: {
         icon: "🎧",
         title: "Calm Coach",
-        text: "You responded to overwhelm with supportive adjustments."
+        text: "Responded to overwhelm supportively."
       },
       safety: {
         icon: "🛟",
         title: "Safety Spotter",
-        text: "You protected safety while keeping participation possible."
+        text: "Protected safety while keeping access."
       }
     };
 
@@ -1027,7 +1007,7 @@
         item.className = `badge ${state.earnedBadges.has(key) ? "earned" : ""}`;
         item.innerHTML = `
           <div class="badge-icon">${badge.icon}</div>
-          <div>
+          <div class="badge-copy">
             <h4>${badge.title}</h4>
             <p>${badge.text}</p>
           </div>
