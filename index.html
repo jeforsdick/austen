@@ -1,137 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adaptive PE Ally Quest</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --panel-2: #eef4ff;
+      --text: #1f2a37;
+      --muted: #5b6778;
+      --accent: #2f6fed;
+      --accent-2: #7c4dff;
+      --good: #138a4b;
+      --warn: #d97706;
+      --bad: #c2410c;
+      --shadow: 0 14px 40px rgba(30, 41, 59, 0.12);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #eef4ff 0%, #f8fbff 45%, #f4f7fb 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1.05;
+      margin: 0 0 12px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .pill {
+      background: #edf3ff;
+      color: #24428a;
+      border: 1px solid #d7e4ff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .start-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid #c8d4ea;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: 0 10px 26px rgba(80, 76, 226, 0.25);
+    }
+
+    .secondary {
+      background: #eef2f8;
+      color: var(--text);
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: var(--panel);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .bar {
+      height: 10px;
+      width: 100%;
+      border-radius: 999px;
+      background: #e9eef6;
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #30508d;
+      background: #ecf2ff;
+      padding: 8px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    .scenario-title {
+      margin: 0 0 10px;
+      font-size: 1.6rem;
+    }
+
+    .scenario-text {
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .choice-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .choice {
+      width: 100%;
+      text-align: left;
+      padding: 16px 18px;
+      background: #f8fbff;
+      border: 1px solid #d7e2f2;
+      color: var(--text);
+      border-radius: 16px;
+    }
+
+    .choice:hover {
+      box-shadow: 0 8px 20px rgba(47, 111, 237, 0.1);
+      border-color: #bfcff2;
+    }
+
+    .choice small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .feedback {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: #f8fbff;
+      border: 1px solid #d8e5f7;
+      display: none;
+    }
+
+    .feedback.show { display: block; }
+
+    .feedback.good {
+      background: #effaf3;
+      border-color: #bee2cb;
+    }
+
+    .feedback.mixed {
+      background: #fff8eb;
+      border-color: #f1d8a6;
+    }
+
+    .feedback.tough {
+      background: #fff2ed;
+      border-color: #f0c2b1;
+    }
+
+    .feedback h3 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+
+    .feedback p {
+      margin: 6px 0;
+      line-height: 1.65;
+    }
+
+    .coach-tip {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.7);
+      font-size: 0.96rem;
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .badge-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .badge {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      min-height: 104px;
+      border-radius: 16px;
+      background: #f8fbff;
+      border: 1px solid #d7e2f2;
+      opacity: 0.58;
+    }
+
+    .badge.earned {
+      opacity: 1;
+      background: linear-gradient(180deg, #f4f9ff 0%, #edf3ff 100%);
+      border-color: #b5ccff;
+    }
+
+    .badge-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      background: white;
+      box-shadow: inset 0 0 0 1px #dde7f8;
+      flex-shrink: 0;
+    }
+
+    .badge-copy {
+      min-width: 0;
+    }
+
+    .badge h4 {
+      margin: 0 0 4px;
+      font-size: 0.88rem;
+      line-height: 1.15;
+    }
+
+    .badge p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.73rem;
+      line-height: 1.28;
+    }
+
+    .mini {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .hidden { display: none !important; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .summary-box {
+      background: var(--panel-2);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .summary-box h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .game-grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .badge-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding: 14px; }
+      .dashboard { grid-template-columns: 1fr; }
+      .hero-title { font-size: 2rem; }
+      .card, .stat { padding: 18px; }
+      .start-box { flex-direction: column; align-items: stretch; }
+      button { width: 100%; }
+      .badge-list { grid-template-columns: 1fr; }
+      .badge { min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section id="heroSection" class="hero">
+      <div class="card">
+        <div class="tag">Adaptive PE Training Game</div>
+        <h1 class="hero-title">Adaptive PE <span class="gradient">Ally Quest</span></h1>
+        <p class="subtitle">
+          A quick scenario game for peer support volunteers who help adults with disabilities during an afternoon adaptive PE program.
+          Practice how to promote choice, dignity, safety, inclusion, communication, and fun.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Scenario choices</span>
+          <span class="pill">Points + streak bonus</span>
+          <span class="pill">Unlockable badges</span>
+          <span class="pill">Coaching feedback</span>
+        </div>
+        <div class="start-box">
+          <input id="playerName" type="text" maxlength="24" placeholder="Enter volunteer name or team name" aria-label="Player name" />
+          <button class="primary" id="startBtn">Start Game</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0;">How to earn points</h3>
+        <p class="mini">
+          Pick the response that best supports the adult participant while protecting dignity and safety. Strong choices earn more points, build a streak, and unlock badges.
+        </p>
+        <div class="summary-grid" style="margin-top: 12px;">
+          <div class="summary-box">
+            <h4>Best practices</h4>
+            <p>Offer choices, use respectful language, support independence, model calmly, and adapt activities without taking over.</p>
+          </div>
+          <div class="summary-box">
+            <h4>Try to avoid</h4>
+            <p>Talking over the person, assuming helplessness, over-prompting, ignoring preferences, or correcting in a way that embarrasses them.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="dashboard" class="dashboard hidden" aria-live="polite">
+      <div class="stat">
+        <div class="stat-label">Points</div>
+        <div class="stat-value" id="pointsVal">0</div>
+        <div class="bar"><span id="pointsBar"></span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Streak</div>
+        <div class="stat-value" id="streakVal">0</div>
+        <div class="bar"><span id="streakBar"></span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Round</div>
+        <div class="stat-value" id="roundVal">0 / 8</div>
+        <div class="bar"><span id="roundBar"></span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Level</div>
+        <div class="stat-value" id="levelVal">Rookie Ally</div>
+        <div class="bar"><span id="levelBar"></span></div>
+      </div>
+    </section>
+
+    <section id="coachGuide" class="card hidden" style="margin-bottom: 20px;">
+      <h3 style="margin-top:0;">Quick coaching guide</h3>
+      <p class="mini">
+        Keep support person-centered. Start with respect, then offer choices, then fade help when the person can do more independently.
+      </p>
+      <p class="mini">
+        In adaptive PE, your goal is not to do the activity for someone. Your goal is to help them participate as fully, safely, and joyfully as possible.
+      </p>
+    </section>
+
+    <section id="gameArea" class="game-grid hidden">
+      <div class="card">
+        <div id="scenarioTag" class="tag">Warm Up</div>
+        <h2 id="scenarioTitle" class="scenario-title">Scenario title</h2>
+        <p id="scenarioText" class="scenario-text">Scenario text</p>
+        <div id="choiceList" class="choice-list"></div>
+        <div id="feedbackBox" class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="side-stack">
+        <div class="card">
+          <h3 style="margin-top:0;">Badges</h3>
+          <p class="mini" style="margin-top: 0; margin-bottom: 12px;">Earn badges by making strong support choices.</p>
+          <div id="badgeList" class="badge-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="endScreen" class="card hidden">
+      <div class="tag">Session Complete</div>
+      <h2 id="endTitle" style="margin-top:0; font-size: 2rem;">Great job!</h2>
+      <p id="endSubtitle" class="subtitle" style="margin-bottom: 14px;"></p>
+      <div class="summary-grid">
+        <div class="summary-box">
+          <h4>Total points</h4>
+          <p id="finalPoints">0</p>
+        </div>
+        <div class="summary-box">
+          <h4>Top level reached</h4>
+          <p id="finalLevel">Rookie Ally</p>
+        </div>
+        <div class="summary-box">
+          <h4>Badges earned</h4>
+          <p id="finalBadges">None yet</p>
+        </div>
+        <div class="summary-box">
+          <h4>Coach takeaway</h4>
+          <p id="coachTakeaway">Keep centering dignity, choice, and inclusion.</p>
+        </div>
+      </div>
+      <div class="start-box" style="margin-top: 18px;">
+        <button id="playAgainBtn" class="primary">Play Again</button>
+        <button id="resetHighBtn" class="secondary">Reset High Score</button>
+      </div>
+      <p id="highScoreText" class="footer-note"></p>
+    </section>
+
+    <p id="pageFooter" class="footer-note">
+      This game is designed as a practice tool, not a replacement for local training, safety procedures, or individualized support plans.
+    </p>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        tag: "Arrival",
+        title: "A participant hangs back at check-in",
+        text: "Jordan arrives at adaptive PE and stays near the wall instead of joining the group. Jordan looks unsure and keeps glancing at the equipment table.",
+        choices: [
+          {
+            text: "Walk over, greet Jordan respectfully, and offer two choices for getting started.",
+            note: "You create a low-pressure entry point and keep the participant in control.",
+            outcome: "great",
+            points: 16,
+            tip: "Choice can reduce pressure and increase participation. Try short, respectful language like: ‘Glad you’re here. Want to start with stretch bands or walking laps?’",
+            badge: "choice"
+          },
+          {
+            text: "Tell Jordan the group already started and they need to catch up now.",
+            note: "This may increase anxiety and does not build connection.",
+            outcome: "tough",
+            points: 2,
+            tip: "A rushed correction can feel discouraging. Start with connection before direction.",
+            badge: null
+          },
+          {
+            text: "Ignore Jordan for a while and hope they join once they feel ready.",
+            note: "Giving space can help sometimes, but total non-support may leave the person isolated.",
+            outcome: "mixed",
+            points: 7,
+            tip: "Space can be helpful when paired with a gentle invitation or planned check-in.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Communication",
+        title: "A participant uses few words",
+        text: "Maria wants to join basketball but does not answer long verbal questions. She points toward the hoop and looks at you.",
+        choices: [
+          {
+            text: "Use brief language, model the action, and check for yes or no with gesture or choice cards.",
+            note: "You adapt communication without talking down to the participant.",
+            outcome: "great",
+            points: 16,
+            tip: "Match your communication to the person. Short words, modeling, and visual choices can make participation easier.",
+            badge: "communication"
+          },
+          {
+            text: "Keep repeating a long explanation until Maria answers verbally.",
+            note: "More language is not always more supportive.",
+            outcome: "tough",
+            points: 2,
+            tip: "If someone is not responding to long verbal directions, simplify and offer another way to communicate.",
+            badge: null
+          },
+          {
+            text: "Answer for Maria and tell the coach she wants basketball.",
+            note: "This may move things along, but it removes Maria from the interaction.",
+            outcome: "mixed",
+            points: 8,
+            tip: "Try not to speak for people when they can participate with support.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Inclusion",
+        title: "Teams are being formed",
+        text: "Two volunteers quickly start picking teammates, and one adult participant is left standing alone because others assume they will slow the team down.",
+        choices: [
+          {
+            text: "Step in respectfully and help create balanced teams with meaningful roles for everyone.",
+            note: "You support inclusion without shaming anyone.",
+            outcome: "great",
+            points: 17,
+            tip: "Inclusion means building the activity so everyone can participate with dignity and purpose.",
+            badge: "inclusion"
+          },
+          {
+            text: "Say nothing because you do not want to make the group uncomfortable.",
+            note: "Avoiding the moment keeps exclusion in place.",
+            outcome: "tough",
+            points: 3,
+            tip: "A calm, practical reset is often better than silence when someone is being excluded.",
+            badge: null
+          },
+          {
+            text: "Assign the participant to keep score instead of playing so the game moves faster.",
+            note: "Alternative roles can be valid, but only if they are meaningful and chosen rather than used to exclude.",
+            outcome: "mixed",
+            points: 8,
+            tip: "Do not assume a person should have a side role. Ask about preferences and make the game accessible first.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Prompting",
+        title: "A participant is trying a new skill",
+        text: "Eli is learning to toss a beanbag into a target. You can see Eli is concentrating and getting close, but misses the target twice.",
+        choices: [
+          {
+            text: "Offer a small cue like ‘Aim a little higher’ and let Eli try again independently.",
+            note: "This supports success while preserving ownership of the task.",
+            outcome: "great",
+            points: 15,
+            tip: "Use the least help needed. A small prompt plus another chance can be more empowering than taking over.",
+            badge: "independence"
+          },
+          {
+            text: "Take the beanbag and demonstrate five times while Eli watches.",
+            note: "Modeling can help, but taking over too much may reduce active practice.",
+            outcome: "mixed",
+            points: 9,
+            tip: "Keep your support brief and return the turn to the participant quickly.",
+            badge: null
+          },
+          {
+            text: "Grab Eli’s arm and move it through the toss without asking.",
+            note: "Physical prompting without consent or need can feel intrusive.",
+            outcome: "tough",
+            points: 1,
+            tip: "Avoid unnecessary hands-on guidance. Ask first, and use less intrusive supports whenever possible.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Respect",
+        title: "Someone talks about a participant instead of to them",
+        text: "A new volunteer asks you, while the participant is standing right there, ‘Can he understand the rules or not?’",
+        choices: [
+          {
+            text: "Redirect respectfully by speaking to the participant first and including them in the conversation.",
+            note: "You model dignity and person-first interaction in the moment.",
+            outcome: "great",
+            points: 18,
+            tip: "Whenever possible, talk to the person, not around them.",
+            badge: "respect"
+          },
+          {
+            text: "Answer the volunteer quickly so the activity can move on.",
+            note: "This may be efficient, but it reinforces talking over the person.",
+            outcome: "mixed",
+            points: 7,
+            tip: "Fast is not always respectful. Bring the participant into the interaction.",
+            badge: null
+          },
+          {
+            text: "Tell the volunteer not to say that in a sharp voice in front of everyone.",
+            note: "The concern is valid, but public sharpness can escalate tension.",
+            outcome: "mixed",
+            points: 8,
+            tip: "Try a calm redirect that protects dignity for everyone involved.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Sensory + Regulation",
+        title: "The gym gets loud",
+        text: "Music starts, balls are bouncing, and Sam begins covering their ears and pacing near the exit.",
+        choices: [
+          {
+            text: "Lower demands, offer a quieter option or break area, and check what would help.",
+            note: "You respond to regulation needs without forcing participation.",
+            outcome: "great",
+            points: 17,
+            tip: "When someone is overwhelmed, reduce input and offer supportive choices.",
+            badge: "regulation"
+          },
+          {
+            text: "Encourage Sam to push through because everyone needs to stay with the group.",
+            note: "This may ignore a real support need.",
+            outcome: "tough",
+            points: 2,
+            tip: "Participation should be supported, not forced through distress.",
+            badge: null
+          },
+          {
+            text: "Stand near Sam silently without changing anything else.",
+            note: "Your presence may help some, but the environment may still be too much.",
+            outcome: "mixed",
+            points: 8,
+            tip: "Presence helps most when paired with an adjustment or choice.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Motivation",
+        title: "A participant says, 'I’m done'",
+        text: "Halfway through relay practice, Chris puts the equipment down and says, ‘I’m done,’ in a frustrated tone.",
+        choices: [
+          {
+            text: "Acknowledge the feeling, offer a brief reset, and ask whether Chris wants a smaller goal or a different role.",
+            note: "You keep dignity high and find a way back into participation.",
+            outcome: "great",
+            points: 16,
+            tip: "Validation plus choice can help a participant re-engage without pressure.",
+            badge: "choice"
+          },
+          {
+            text: "Say, ‘No quitting. Everybody has to finish.’",
+            note: "This may increase resistance and does not solve the barrier.",
+            outcome: "tough",
+            points: 1,
+            tip: "A power struggle rarely builds long-term engagement.",
+            badge: null
+          },
+          {
+            text: "Let Chris leave the activity immediately with no follow-up.",
+            note: "Sometimes ending is appropriate, but a supportive check-in is usually still helpful.",
+            outcome: "mixed",
+            points: 7,
+            tip: "Try to learn what the person needs before assuming the activity is over.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Safety",
+        title: "A game is moving too fast",
+        text: "During a tag activity, one participant seems excited but is running close to walls and not noticing others around them.",
+        choices: [
+          {
+            text: "Adjust the space or rules right away and guide the participant to a safer way to keep playing.",
+            note: "You protect safety while preserving access to the activity.",
+            outcome: "great",
+            points: 18,
+            tip: "The best safety support often changes the setup, not just the person.",
+            badge: "safety"
+          },
+          {
+            text: "Pull the participant out of the game for the rest of the session.",
+            note: "Removing someone may be safe in the moment, but it should not be the only tool.",
+            outcome: "mixed",
+            points: 8,
+            tip: "Before excluding, see whether the activity can be adapted so the person can still participate.",
+            badge: null
+          },
+          {
+            text: "Wait and see whether the coach notices before doing anything.",
+            note: "Delaying may allow risk to increase.",
+            outcome: "tough",
+            points: 2,
+            tip: "Safety concerns are worth acting on quickly and calmly.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Peer Modeling",
+        title: "Another volunteer is over-helping",
+        text: "You notice another peer volunteer fastening every piece of equipment for a participant who usually does most of it independently.",
+        choices: [
+          {
+            text: "Quietly suggest waiting a few seconds and offering help only if needed or requested.",
+            note: "You support independence while coaching your peer respectfully.",
+            outcome: "great",
+            points: 17,
+            tip: "A little wait time can reveal what the participant can do on their own.",
+            badge: "independence"
+          },
+          {
+            text: "Say loudly, ‘Stop babying them,’ so the volunteer gets the point.",
+            note: "The message matters, but public shaming does not help.",
+            outcome: "tough",
+            points: 2,
+            tip: "Coach peers in a respectful way that keeps everyone open to learning.",
+            badge: null
+          },
+          {
+            text: "Do nothing because the volunteer probably means well.",
+            note: "Intent matters, but over-helping can still limit independence.",
+            outcome: "mixed",
+            points: 8,
+            tip: "When support is too much, a gentle redirect can protect dignity and growth.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Celebration",
+        title: "A participant finishes in a different way",
+        text: "The activity goal was to complete five passes with a partner. Taylor completes the task by rolling the ball instead of throwing it, and looks proud.",
+        choices: [
+          {
+            text: "Celebrate the success and name what Taylor did well, even though the method looked different.",
+            note: "You reinforce participation and success in an accessible way.",
+            outcome: "great",
+            points: 15,
+            tip: "Adaptive PE is about meaningful participation, not one perfect method.",
+            badge: "inclusion"
+          },
+          {
+            text: "Correct Taylor immediately because the directions said to throw, not roll.",
+            note: "Accuracy matters sometimes, but this response may undercut motivation and access.",
+            outcome: "tough",
+            points: 2,
+            tip: "Start by recognizing success. Then decide whether and how to shape toward the next step.",
+            badge: null
+          },
+          {
+            text: "Say nothing because finishing is expected.",
+            note: "A missed opportunity for encouragement.",
+            outcome: "mixed",
+            points: 7,
+            tip: "Specific praise helps people know what worked and builds confidence.",
+            badge: null
+          }
+        ]
+      },
+      {
+        tag: "Autonomy",
+        title: "A participant wants to try first",
+        text: "Before you step in to help set up a scooter board, Nina says, ‘I do it.’",
+        choices: [
+          {
+            text: "Pause, let Nina try, and stay nearby in case support is needed.",
+            note: "You honor autonomy and keep support available.",
+            outcome: "great",
+            points: 17,
+            tip: "When someone expresses a preference for independence, respect it unless safety requires otherwise.",
+            badge: "respect"
+          },
+          {
+            text: "Set it up anyway because it will be faster.",
+            note: "Efficiency is not more important than dignity and choice.",
+            outcome: "tough",
+            points: 1,
+            tip: "Fast help can accidentally erase independence.",
+            badge: null
+          },
+          {
+            text: "Tell Nina she can do half while you do the rest without asking what she wants.",
+            note: "Shared support can work, but this still overrides the request.",
+            outcome: "mixed",
+            points: 8,
+            tip: "Start by honoring the person’s stated preference whenever possible.",
+            badge: null
+          }
+        ]
+      }
+    ];
+
+    const badgeDefs = {
+      choice: {
+        icon: "🧭",
+        title: "Choice Champion",
+        text: "Offered respectful choices."
+      },
+      communication: {
+        icon: "💬",
+        title: "Communication Star",
+        text: "Adapted communication support."
+      },
+      inclusion: {
+        icon: "🤝",
+        title: "Inclusion Leader",
+        text: "Made participation more inclusive."
+      },
+      independence: {
+        icon: "🌱",
+        title: "Independence Builder",
+        text: "Supported skill growth without taking over."
+      },
+      respect: {
+        icon: "✨",
+        title: "Dignity Defender",
+        text: "Modeled respectful support."
+      },
+      regulation: {
+        icon: "🎧",
+        title: "Calm Coach",
+        text: "Responded to overwhelm supportively."
+      },
+      safety: {
+        icon: "🛟",
+        title: "Safety Spotter",
+        text: "Protected safety while keeping access."
+      }
+    };
+
+    const state = {
+      player: "Volunteer",
+      points: 0,
+      streak: 0,
+      round: 0,
+      current: 0,
+      chosenSet: [],
+      earnedBadges: new Set(),
+      answered: false,
+      highScore: Number(localStorage.getItem("adaptivePEHighScore") || 0)
+    };
+
+    const els = {
+      heroSection: document.getElementById("heroSection"),
+      pageFooter: document.getElementById("pageFooter"),
+      coachGuide: document.getElementById("coachGuide"),
+      playerName: document.getElementById("playerName"),
+      startBtn: document.getElementById("startBtn"),
+      dashboard: document.getElementById("dashboard"),
+      gameArea: document.getElementById("gameArea"),
+      scenarioTag: document.getElementById("scenarioTag"),
+      scenarioTitle: document.getElementById("scenarioTitle"),
+      scenarioText: document.getElementById("scenarioText"),
+      choiceList: document.getElementById("choiceList"),
+      feedbackBox: document.getElementById("feedbackBox"),
+      pointsVal: document.getElementById("pointsVal"),
+      streakVal: document.getElementById("streakVal"),
+      roundVal: document.getElementById("roundVal"),
+      levelVal: document.getElementById("levelVal"),
+      pointsBar: document.getElementById("pointsBar"),
+      streakBar: document.getElementById("streakBar"),
+      roundBar: document.getElementById("roundBar"),
+      levelBar: document.getElementById("levelBar"),
+      badgeList: document.getElementById("badgeList"),
+      endScreen: document.getElementById("endScreen"),
+      endTitle: document.getElementById("endTitle"),
+      endSubtitle: document.getElementById("endSubtitle"),
+      finalPoints: document.getElementById("finalPoints"),
+      finalLevel: document.getElementById("finalLevel"),
+      finalBadges: document.getElementById("finalBadges"),
+      coachTakeaway: document.getElementById("coachTakeaway"),
+      playAgainBtn: document.getElementById("playAgainBtn"),
+      resetHighBtn: document.getElementById("resetHighBtn"),
+      highScoreText: document.getElementById("highScoreText")
+    };
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function getLevel(points) {
+      if (points >= 120) return { name: "Gold Ally", pct: 100 };
+      if (points >= 90) return { name: "Skilled Supporter", pct: 75 };
+      if (points >= 55) return { name: "Growing Guide", pct: 50 };
+      return { name: "Rookie Ally", pct: 25 };
+    }
+
+    function getFeedbackHeading(outcome) {
+      if (outcome === "great") return "Great choice";
+      if (outcome === "mixed") return "Decent start";
+      return "Try a stronger support move";
+    }
+
+    function getOutcomeClass(outcome) {
+      if (outcome === "great") return "good";
+      if (outcome === "mixed") return "mixed";
+      return "tough";
+    }
+
+    function coachTakeaway(points, badges) {
+      if (points >= 120 && badges.length >= 4) {
+        return "Excellent work. You kept support respectful, flexible, and person-centered while still attending to safety and participation.";
+      }
+      if (points >= 85) {
+        return "Strong session. Keep building your habit of offering choice, fading prompts, and adapting activities instead of removing people from them.";
+      }
+      return "Your biggest growth area is slowing down and centering autonomy, dignity, and accessible participation before jumping to control or correction.";
+    }
+
+    function renderBadges() {
+      els.badgeList.innerHTML = "";
+      Object.entries(badgeDefs).forEach(([key, badge]) => {
+        const item = document.createElement("div");
+        item.className = `badge ${state.earnedBadges.has(key) ? "earned" : ""}`;
+        item.innerHTML = `
+          <div class="badge-icon">${badge.icon}</div>
+          <div class="badge-copy">
+            <h4>${badge.title}</h4>
+            <p>${badge.text}</p>
+          </div>
+        `;
+        els.badgeList.appendChild(item);
+      });
+    }
+
+    function updateDashboard() {
+      const level = getLevel(state.points);
+      els.pointsVal.textContent = state.points;
+      els.streakVal.textContent = state.streak;
+      els.roundVal.textContent = `${state.round} / 8`;
+      els.levelVal.textContent = level.name;
+      els.pointsBar.style.width = `${Math.min((state.points / 120) * 100, 100)}%`;
+      els.streakBar.style.width = `${Math.min((state.streak / 4) * 100, 100)}%`;
+      els.roundBar.style.width = `${(state.round / 8) * 100}%`;
+      els.levelBar.style.width = `${level.pct}%`;
+    }
+
+    function startGame() {
+      state.player = els.playerName.value.trim() || "Volunteer";
+      els.heroSection.classList.add("hidden");
+      els.pageFooter.classList.add("hidden");
+      state.points = 0;
+      state.streak = 0;
+      state.round = 0;
+      state.current = 0;
+      state.earnedBadges = new Set();
+      state.answered = false;
+      state.chosenSet = shuffle(scenarios).slice(0, 8);
+      els.dashboard.classList.remove("hidden");
+      els.coachGuide.classList.remove("hidden");
+      els.gameArea.classList.remove("hidden");
+      els.endScreen.classList.add("hidden");
+      renderBadges();
+      updateDashboard();
+      renderScenario();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderScenario() {
+      const item = state.chosenSet[state.current];
+      state.answered = false;
+      els.feedbackBox.className = "feedback";
+      els.feedbackBox.innerHTML = "";
+      els.scenarioTag.textContent = item.tag;
+      els.scenarioTitle.textContent = item.title;
+      els.scenarioText.textContent = item.text;
+      els.choiceList.innerHTML = "";
+
+      shuffle(item.choices).forEach((choice, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.innerHTML = `${choice.text}<small>${choice.note}</small>`;
+        btn.addEventListener("click", () => chooseAnswer(choice, idx));
+        els.choiceList.appendChild(btn);
+      });
+    }
+
+    function chooseAnswer(choice) {
+      if (state.answered) return;
+      state.answered = true;
+
+      const buttons = [...document.querySelectorAll(".choice")];
+      buttons.forEach(btn => btn.disabled = true);
+
+      let bonus = 0;
+      if (choice.outcome === "great") {
+        state.streak += 1;
+        if (state.streak > 1) bonus = 2 * Math.min(state.streak - 1, 3);
+      } else if (choice.outcome === "mixed") {
+        state.streak = 0;
+      } else {
+        state.streak = 0;
+      }
+
+      state.points += choice.points + bonus;
+      state.round += 1;
+      if (choice.badge) state.earnedBadges.add(choice.badge);
+
+      renderBadges();
+      updateDashboard();
 
-
-
-make me an html game that lets peer support volunteers practice skills to help support adults with disabilities in an adaptive PE afternoon program. I want it to be fun, engaging and use badges and or points to go with it. 
-
-I’m building this as a single-file HTML game with scenario-based choices, points, and badges. I’m making it specific to an adaptive PE peer-support setting so it feels practical, not generic.
-
-Thought for 22s
-Done — I made the game in the canvas as a single HTML file.
-
-It includes:
-
-scenario-based choices for peer support volunteers
-
-adaptive PE-specific situations
-
-points and streak bonuses
-
-unlockable badges
-
-coaching feedback after each choice
-
-a replay option and saved high score
-
-The tone is person-centered and focused on dignity, choice, inclusion, independence, communication, and safety.
-
-I can also turn this into a version with:
-
-more game-like animations and sound
-
-your exact program name and branding
-
-adult participant names/scenarios from your setting
-
-a facilitator mode with discussion questions after each scenario
-
-
-how do i make it so the top parts of the game go away so the main focus is on the game?
-
-I tightened the layout so the intro area disappears once the game starts, which keeps attention on the scenarios instead of the setup text.
-
-Thought for 18s
-I updated it so the intro/top section disappears as soon as the player starts the game.
-
-What changed:
-
-the hero/introduction section now hides on Start
-
-the bottom note also hides
-
-the page scrolls up so the game is front and center
-
-If you want it even more focused, I can also make the score/badges panel smaller or move it below the scenario so the choices take up most of the screen.
-
-
-can you make the coaching guide at the top below all points boxed
-
-I’m moving that guide into its own boxed section right under the points bar so it reads like a quick reference before the scenario area.
-
-Thought for 6s
-Yes — I moved the coaching guide into its own boxed section directly under the points area and above the main game.
-
-So now the order is:
-
-points / streak / round / level
-
-boxed coaching guide
-
-game scenario + badges
-
-That should make it feel more like a quick reminder instead of competing with the main scenario.
-
-
-can you make the badges now circles in two by two so they show up all next to the game box
-
-I’m changing the badge area into a compact 2-by-2 grid of circular badges so it sits neatly beside the scenario instead of stacking long cards.
-
-Thought for a couple of seconds
-Done — the badges are now circular and arranged in a compact 2-by-2 style next to the game box.
-
-I also tightened the badge text so they fit better in that smaller layout. If you want, I can make them even more visual by showing only the icon and short title until they’re earned.
-
-
-the badges are still too big and go off screen. Can you make it so they are circles with their image and description within the circle in the two by two format
-
-I’m shrinking the badge circles and making each one self-contained so the icon, title, and short description fit inside the circle without spilling off screen.
-
-Thought for a couple of seconds
-I shrank them and made each badge a true circle with:
-
-icon at the top
-
-title inside the circle
-
-short description inside the circle
-
-2-by-2 grid layout
-
-I also added a smaller mobile version so they should stay on screen better. If they still feel cramped, the next best tweak is to shorten each badge description to just 2–4 words.
-
-
-Uploaded image
-
-Pasted text.txt
-Document
-you broke the top progress and points bars. Go back to this, just make the badges all show up next to the main game box. 
-
-
-Thought for 1m 1s
-I restored it to the earlier layout you pasted and kept the top progress bars intact. Then I only changed the badge area so all badges sit next to the main game box in a tighter 2-column layout. 
-
-
-What I changed:
-
-put the dashboard/progress bars back the way they were
-
-kept the coaching guide placement
-
-made the right badge panel a compact 2-column grid
-
-shrank the badge cards and shortened the badge descriptions so all 7 fit beside the scenario box
-
-Check it now. If you want, I can do one more pass to make the right badge column slightly wider and the scenario column slightly narrower.
-
-
-
-Pasted text.txt
-Document
-I want my question answers to shuffle each time. 
-
-I updated it so each scenario’s answer choices now shuffle every time that scenario appears.
-
-Adaptive Pe Peer Support Game
-· html
       const bonusText = bonus > 0 ? `<p><strong>Streak bonus:</strong> +${bonus} points</p>` : "";
       const isLast = state.current >= state.chosenSet.length - 1;
       els.feedbackBox.className = `feedback show ${getOutcomeClass(choice.outcome)}`;
@@ -194,7 +1154,3 @@ Adaptive Pe Peer Support Game
   </script>
 </body>
 </html>
-
-
-
-
