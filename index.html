@@ -1059,7 +1059,7 @@
       els.scenarioText.textContent = item.text;
       els.choiceList.innerHTML = "";
 
-     const shuffledChoices = shuffle(item.choices);
+const shuffledChoices = shuffle(item.choices);{
 
 shuffledChoices.forEach((choice) => {
   const btn = document.createElement("button");
@@ -1068,7 +1068,7 @@ shuffledChoices.forEach((choice) => {
   btn.addEventListener("click", () => chooseAnswer(choice));
   els.choiceList.appendChild(btn);
 });
-
+}
     function chooseAnswer(choice) {
       if (state.answered) return;
       state.answered = true;
