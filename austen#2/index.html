@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adaptive PE Peer Support Quest</title>
+  <style>
+    :root {
+      --bg: #0f1224;
+      --panel: #1a1f3b;
+      --panel-soft: #242a52;
+      --text: #f3f5ff;
+      --muted: #bac1f7;
+      --accent: #6ee7b7;
+      --accent-2: #93c5fd;
+      --warning: #fbbf24;
+      --good: #34d399;
+      --bad: #fb7185;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 10%, #1f2662, var(--bg) 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1.25rem;
+    }
+
+    .game-shell {
+      width: min(940px, 100%);
+      background: linear-gradient(170deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      box-shadow: 0 15px 30px var(--shadow);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.4px;
+    }
+
+    .sub {
+      margin: 0.3rem 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .stats {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+    }
+
+    .stat-pill {
+      background: var(--panel-soft);
+      padding: 0.42rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    @media (max-width: 800px) {
+      .main { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem;
+    }
+
+    .scenario-tag {
+      display: inline-flex;
+      gap: 0.4rem;
+      align-items: center;
+      background: rgba(147, 197, 253, 0.15);
+      color: #dbeafe;
+      border: 1px solid rgba(147, 197, 253, 0.35);
+      border-radius: 999px;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.78rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .scenario-title {
+      margin: 0.2rem 0 0.55rem;
+      font-size: 1.15rem;
+      line-height: 1.35;
+    }
+
+    .scenario-body {
+      margin: 0 0 0.95rem;
+      color: #e2e8ff;
+      line-height: 1.5;
+    }
+
+    .choices {
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .choice-btn {
+      text-align: left;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 0.75rem 0.8rem;
+      cursor: pointer;
+      transition: 160ms ease;
+      font-size: 0.95rem;
+    }
+
+    .choice-btn:hover,
+    .choice-btn:focus-visible {
+      border-color: rgba(110, 231, 183, 0.7);
+      transform: translateY(-1px);
+      outline: none;
+      background: rgba(110, 231, 183, 0.09);
+    }
+
+    .choice-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+      transform: none;
+    }
+
+    .feedback {
+      margin-top: 0.85rem;
+      padding: 0.8rem;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      display: none;
+    }
+
+    .feedback.good {
+      display: block;
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+    }
+
+    .feedback.ok {
+      display: block;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+    }
+
+    .feedback.bad {
+      display: block;
+      background: rgba(251, 113, 133, 0.15);
+      border: 1px solid rgba(251, 113, 133, 0.35);
+    }
+
+    .next-row {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    button.primary {
+      border: 0;
+      background: linear-gradient(130deg, var(--accent), #34d399);
+      color: #042116;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 0.62rem 1rem;
+      cursor: pointer;
+    }
+
+    button.primary:hover { filter: brightness(1.08); }
+
+    .sidebar h3 {
+      margin: 0 0 0.6rem;
+      font-size: 1rem;
+    }
+
+    .badge-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 0.58rem 0.65rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .badge.unlocked {
+      color: #ecfff7;
+      border-color: rgba(110, 231, 183, 0.55);
+      background: rgba(110, 231, 183, 0.13);
+    }
+
+    .progress-wrap {
+      margin-top: 0.9rem;
+    }
+
+    progress {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .footer {
+      margin-top: 0.95rem;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
+    .end-card {
+      display: none;
+      margin-top: 0.9rem;
+      padding: 0.9rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .end-card.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="game-shell" role="application" aria-label="Adaptive PE Peer Support game">
+    <div class="header">
+      <div>
+        <h1>Adaptive PE Peer Support Quest</h1>
+        <p class="sub">Practice communication, inclusion, and safety-support choices.</p>
+      </div>
+      <div class="stats">
+        <span class="stat-pill">Points: <strong id="points">0</strong></span>
+        <span class="stat-pill">Streak: <strong id="streak">0</strong></span>
+        <span class="stat-pill">Round: <strong id="round">1</strong>/<span id="total-rounds">8</span></span>
+        <span class="stat-pill">Best: <strong id="best">0</strong></span>
+      </div>
+    </div>
+
+    <div class="main">
+      <section class="panel">
+        <div class="scenario-tag" id="skill-tag">Skill: Empathy</div>
+        <h2 class="scenario-title" id="scenario-title">Loading scenario...</h2>
+        <p class="scenario-body" id="scenario-body"></p>
+        <div class="choices" id="choices"></div>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <div class="next-row">
+          <button class="primary" id="next-btn" disabled>Next</button>
+        </div>
+
+        <div class="end-card" id="end-card">
+          <h3>Session complete!</h3>
+          <p id="end-copy"></p>
+          <button class="primary" id="replay-btn">Play Again</button>
+        </div>
+      </section>
+
+      <aside class="panel sidebar">
+        <h3>Badge Board</h3>
+        <ul class="badge-list" id="badge-list"></ul>
+
+        <div class="progress-wrap">
+          <h3>Completion</h3>
+          <progress id="progress" max="8" value="0"></progress>
+        </div>
+
+        <p class="footer">
+          Each choice reflects real peer support moments: person-first language, autonomy, safety, and encouragement.
+        </p>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        skill: "Respectful Communication",
+        title: "Warm-Up Confusion",
+        prompt: "A participant looks unsure during stretching and avoids eye contact. What do you do first?",
+        choices: [
+          { text: "Ask quietly: 'Would you like me to show one stretch together?'", points: 15, result: "Great start. You offered support and choice without pressure.", tone: "good" },
+          { text: "Do all the stretches for them so the group can keep moving.", points: 4, result: "Helpful intention, but this may remove autonomy. Try coaching with consent.", tone: "ok" },
+          { text: "Tell them to copy everyone else and keep up.", points: -6, result: "This can increase anxiety and reduce trust.", tone: "bad" }
+        ]
+      },
+      {
+        skill: "Inclusion",
+        title: "Equipment Choice",
+        prompt: "The activity uses jump ropes, but one participant prefers a resistance band. What is your best response?",
+        choices: [
+          { text: "Validate the preference and help adapt the movement with the band.", points: 15, result: "Excellent adaptation. Inclusion means multiple ways to participate.", tone: "good" },
+          { text: "Insist everyone must use the same equipment for fairness.", points: -6, result: "Equal is not always equitable. Adaptations support fair participation.", tone: "bad" },
+          { text: "Ignore the request and move to the next station.", points: -4, result: "Missed opportunity to support engagement and self-advocacy.", tone: "bad" }
+        ]
+      },
+      {
+        skill: "Positive Reinforcement",
+        title: "Small Progress Moment",
+        prompt: "A participant completes one full lap after many breaks. How do you respond?",
+        choices: [
+          { text: "Celebrate the effort: 'You paced yourself and finished strong!'", points: 15, result: "Great feedback: specific, encouraging, and effort-focused.", tone: "good" },
+          { text: "Say nothing to avoid making it a big deal.", points: 2, result: "Neutral response. Positive reinforcement could build confidence.", tone: "ok" },
+          { text: "Compare them to another participant who did more laps.", points: -7, result: "Comparison can be discouraging and undermine motivation.", tone: "bad" }
+        ]
+      },
+      {
+        skill: "Autonomy",
+        title: "Decision Time",
+        prompt: "A participant asks for a break but the game just started. What should you do?",
+        choices: [
+          { text: "Offer options: short water break now or modified movement nearby.", points: 15, result: "Strong choice. You honored needs while keeping participation open.", tone: "good" },
+          { text: "Say no, breaks are only allowed at scheduled times.", points: -6, result: "Rigid rules can reduce trust and safety.", tone: "bad" },
+          { text: "Take over and decide for them without asking questions.", points: -5, result: "Support should include the participant's voice and preferences.", tone: "bad" }
+        ]
+      },
+      {
+        skill: "Safety Awareness",
+        title: "Crowded Court",
+        prompt: "The court gets crowded and one participant seems overwhelmed by noise. Best volunteer action?",
+        choices: [
+          { text: "Guide them to a quieter lane and check in using calm language.", points: 15, result: "Excellent de-escalation and environmental support.", tone: "good" },
+          { text: "Tell them to ignore the noise and continue.", points: -5, result: "This may dismiss sensory needs.", tone: "bad" },
+          { text: "Leave them alone immediately without checking safety.", points: -6, result: "Stepping away without checking may create risk.", tone: "bad" }
+        ]
+      },
+      {
+        skill: "Team Collaboration",
+        title: "Mixed Signals",
+        prompt: "The lead instructor gives fast directions, and a participant looks lost. What do you do?",
+        choices: [
+          { text: "Quietly coordinate with instructor to repeat directions in steps.", points: 15, result: "Great teamwork. Shared communication helps everyone.", tone: "good" },
+          { text: "Interrupt loudly and criticize the instructor in front of group.", points: -4, result: "Advocacy matters, but public criticism can disrupt trust.", tone: "bad" },
+          { text: "Wait to see if someone else helps.", points: 2, result: "Cautious but passive. Earlier support could reduce stress.", tone: "ok" }
+        ]
+      },
+      {
+        skill: "Dignity",
+        title: "Language Check",
+        prompt: "Another volunteer refers to an adult participant as 'like a kid.' How do you respond?",
+        choices: [
+          { text: "Model respectful language and suggest person-first wording privately.", points: 15, result: "Strong professionalism. You preserved dignity and coached respectfully.", tone: "good" },
+          { text: "Laugh it off so there is no awkwardness.", points: -5, result: "Silence can normalize disrespectful language.", tone: "bad" },
+          { text: "Confront aggressively in front of participants.", points: 1, result: "Intent to correct is valid; private coaching is usually more effective.", tone: "ok" }
+        ]
+      },
+      {
+        skill: "Encouragement",
+        title: "End-of-Session Reflection",
+        prompt: "A participant says, 'I wasn't good today.' What response helps most?",
+        choices: [
+          { text: "Reflect strengths: 'You tried new movements and kept showing up.'", points: 15, result: "Excellent strengths-based encouragement.", tone: "good" },
+          { text: "Say, 'It's fine,' and quickly move on.", points: 2, result: "Kind but brief. A deeper reflection can build confidence.", tone: "ok" },
+          { text: "Agree and point out what they did wrong.", points: -7, result: "This can reinforce negative self-talk.", tone: "bad" }
+        ]
+      }
+    ];
+
+    const badges = [
+      { id: "starter", label: "First Step", check: (s) => s.answered >= 1, hint: "Finish 1 scenario." },
+      { id: "support-star", label: "Support Star", check: (s) => s.points >= 40, hint: "Reach 40 points." },
+      { id: "streak-hero", label: "Streak Hero", check: (s) => s.maxStreak >= 3, hint: "Get a 3-answer positive streak." },
+      { id: "inclusive-champ", label: "Inclusive Champ", check: (s) => s.goodChoices >= 6, hint: "Pick 6 top-support choices." },
+      { id: "program-mentor", label: "Program Mentor", check: (s) => s.completed, hint: "Complete all scenarios." }
+    ];
+
+    const pointsEl = document.getElementById("points");
+    const streakEl = document.getElementById("streak");
+    const roundEl = document.getElementById("round");
+    const totalRoundsEl = document.getElementById("total-rounds");
+    const bestEl = document.getElementById("best");
+    const skillTagEl = document.getElementById("skill-tag");
+    const titleEl = document.getElementById("scenario-title");
+    const bodyEl = document.getElementById("scenario-body");
+    const choicesEl = document.getElementById("choices");
+    const feedbackEl = document.getElementById("feedback");
+    const nextBtn = document.getElementById("next-btn");
+    const replayBtn = document.getElementById("replay-btn");
+    const progressEl = document.getElementById("progress");
+    const badgeListEl = document.getElementById("badge-list");
+    const endCardEl = document.getElementById("end-card");
+    const endCopyEl = document.getElementById("end-copy");
+
+    let state = {};
+    let currentOrder = [];
+
+    function shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function resetGame() {
+      state = {
+        idx: 0,
+        points: 0,
+        streak: 0,
+        maxStreak: 0,
+        goodChoices: 0,
+        answered: 0,
+        completed: false,
+        unlocked: new Set()
+      };
+      currentOrder = shuffle(scenarios);
+      totalRoundsEl.textContent = String(currentOrder.length);
+      progressEl.max = currentOrder.length;
+      endCardEl.classList.remove("show");
+      renderCurrent();
+      renderStats();
+      renderBadges();
+    }
+
+    function bestScore() {
+      const value = Number(localStorage.getItem("adaptivePeBest") || 0);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function saveBest(score) {
+      const previous = bestScore();
+      if (score > previous) {
+        localStorage.setItem("adaptivePeBest", String(score));
+      }
+    }
+
+    function renderStats() {
+      pointsEl.textContent = String(state.points);
+      streakEl.textContent = String(state.streak);
+      roundEl.textContent = String(Math.min(state.idx + 1, currentOrder.length));
+      progressEl.value = state.answered;
+      bestEl.textContent = String(bestScore());
+    }
+
+    function renderCurrent() {
+      const item = currentOrder[state.idx];
+      if (!item) {
+        finishGame();
+        return;
+      }
+      skillTagEl.textContent = "Skill: " + item.skill;
+      titleEl.textContent = item.title;
+      bodyEl.textContent = item.prompt;
+      feedbackEl.className = "feedback";
+      feedbackEl.textContent = "";
+      nextBtn.disabled = true;
+      choicesEl.innerHTML = "";
+
+      item.choices.forEach((choice) => {
+        const btn = document.createElement("button");
+        btn.className = "choice-btn";
+        btn.textContent = choice.text;
+        btn.addEventListener("click", () => handleChoice(choice));
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function handleChoice(choice) {
+      const buttons = choicesEl.querySelectorAll("button");
+      buttons.forEach((b) => {
+        b.disabled = true;
+        if (b.textContent === choice.text) {
+          b.style.borderColor = "rgba(110, 231, 183, 0.9)";
+          b.style.background = "rgba(110, 231, 183, 0.15)";
+        }
+      });
+
+      state.points += choice.points;
+      state.answered += 1;
+
+      if (choice.tone === "good") {
+        state.streak += 1;
+        state.goodChoices += 1;
+        state.maxStreak = Math.max(state.maxStreak, state.streak);
+      } else {
+        state.streak = 0;
+      }
+
+      feedbackEl.className = "feedback " + choice.tone;
+      feedbackEl.textContent = choice.result + " (" + (choice.points >= 0 ? "+" : "") + choice.points + " pts)";
+      nextBtn.disabled = false;
+
+      updateUnlockedBadges();
+      renderBadges();
+      renderStats();
+    }
+
+    function updateUnlockedBadges() {
+      badges.forEach((badge) => {
+        if (badge.check(state)) {
+          state.unlocked.add(badge.id);
+        }
+      });
+    }
+
+    function renderBadges() {
+      badgeListEl.innerHTML = "";
+      badges.forEach((badge) => {
+        const li = document.createElement("li");
+        const unlocked = state.unlocked.has(badge.id);
+        li.className = "badge" + (unlocked ? " unlocked" : "");
+        li.innerHTML = "<span>" + badge.label + "</span><strong>" + (unlocked ? "Unlocked" : "Locked") + "</strong>";
+        if (!unlocked) {
+          li.title = badge.hint;
+        }
+        badgeListEl.appendChild(li);
+      });
+    }
+
+    function finishGame() {
+      state.completed = true;
+      updateUnlockedBadges();
+      renderBadges();
+      saveBest(state.points);
+      renderStats();
+
+      titleEl.textContent = "Great work, volunteer!";
+      bodyEl.textContent = "You completed all scenarios. Review your badges and replay to improve your score.";
+      skillTagEl.textContent = "Skill: Reflection";
+      choicesEl.innerHTML = "";
+      feedbackEl.className = "feedback";
+      feedbackEl.textContent = "";
+      nextBtn.disabled = true;
+
+      const badgeCount = state.unlocked.size;
+      endCopyEl.textContent = "Final score: " + state.points + " points | Badges unlocked: " + badgeCount + "/" + badges.length + ".";
+      endCardEl.classList.add("show");
+    }
+
+    nextBtn.addEventListener("click", () => {
+      state.idx += 1;
+      renderCurrent();
+      renderStats();
+    });
+
+    replayBtn.addEventListener("click", resetGame);
+
+    resetGame();
+  </script>
+</body>
+</html>
